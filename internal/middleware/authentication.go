@@ -1,11 +1,10 @@
 package appMiddleware
 
 import (
-	"encoding/json"
 	"net/http"
 	contextKey "srwilliamg/app/v1/internal/context-key"
 	customError "srwilliamg/app/v1/internal/custom-error"
-	appRequest "srwilliamg/app/v1/internal/request"
+	"srwilliamg/app/v1/internal/request"
 
 	"go.uber.org/zap"
 )
@@ -30,17 +29,13 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		res := appRequest.BaseResponse[any](nil, customError.NewCustomError("Authorization error", nil), nil)
-		resJsonBytes, err := json.Marshal(res)
+		res, err := request.MarshalResponse[any](nil, customError.NewCustomError("You are not Authorized", nil))
 		if err != nil {
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
+			logger.Error("Error marshalling response:", zap.Error(err))
 		}
 
 		logger.Info("Response Auth:", zap.Any("response", res))
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(resJsonBytes)
+		request.PrepareResponse(&w, res, http.StatusUnauthorized)
 	})
 
 }

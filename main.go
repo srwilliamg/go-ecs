@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"srwilliamg/app/v1/internal/config"
 	appMiddleware "srwilliamg/app/v1/internal/middleware"
 	"srwilliamg/app/v1/routes"
 
@@ -21,11 +22,17 @@ func createApp() *chi.Mux {
 
 func run() {
 	app := createApp()
+	config.Load()
+	app.Mount("/", routes.Routes(app))
 
-	routes.Routes(app)
+	fmt.Printf("Starting server on %s\n", config.Envs.Port)
+	err := http.ListenAndServe(":"+config.Envs.Port, app)
 
-	fmt.Println("Starting server on port 3000")
-	http.ListenAndServe(":3000", app)
+	if err != nil {
+		fmt.Printf("Error starting server: %v\n", err)
+		return
+	}
+	fmt.Println("Server started successfully")
 }
 
 func main() {

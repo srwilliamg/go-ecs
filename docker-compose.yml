@@ -1,0 +1,34 @@
+services:
+  postgres_db:
+    image: postgres:latest
+    container_name: go-db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+  gopi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gopi-container
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASS=postgres123
+      - DB_NAME=gopi-db
+      - APP_ENV=development
+      - LOG_LEVEL=info
+    depends_on:
+      - postgres_db
+volumes:
+  postgres_db:
+    driver: local
+ 

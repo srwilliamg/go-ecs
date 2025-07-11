@@ -1,4 +1,4 @@
-package appRequest
+package request
 
 import (
 	"reflect"

@@ -6,15 +6,25 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func UserRouter(app *chi.Mux) *chi.Mux {
+func UserRouter() *chi.Mux {
 	router := chi.NewRouter()
 
-	router.Get("/users", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("List of users"))
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		_, err := w.Write([]byte("List of users"))
+
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 	})
 
-	router.Post("/users", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Create a user"))
+	router.Post("/", func(w http.ResponseWriter, r *http.Request) {
+		_, err := w.Write([]byte("Create a user"))
+
+		if err != nil {
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 	})
 
 	return router
