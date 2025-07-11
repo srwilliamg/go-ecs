@@ -2,7 +2,7 @@ package appRequest
 
 import (
 	"reflect"
-	customError "srwilliamg/app/v1/custom-error"
+	customError "srwilliamg/app/v1/internal/custom-error"
 
 	zap "go.uber.org/zap"
 )
@@ -13,7 +13,6 @@ type controllerResponse[T any] struct {
 }
 
 func BaseResponse[T any](Data T, err error, logger *zap.Logger) *controllerResponse[T] {
-
 	if err != nil && logger != nil {
 		logger.Error("error", zap.Error(err))
 	}

@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	contextKey "srwilliamg/app/v1/context-key"
+	contextKey "srwilliamg/app/v1/internal/context-key"
 	"strings"
 
 	"go.uber.org/zap"

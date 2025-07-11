@@ -3,9 +3,9 @@ package appMiddleware
 import (
 	"encoding/json"
 	"net/http"
-	contextKey "srwilliamg/app/v1/context-key"
-	customError "srwilliamg/app/v1/custom-error"
-	appRequest "srwilliamg/app/v1/request"
+	contextKey "srwilliamg/app/v1/internal/context-key"
+	customError "srwilliamg/app/v1/internal/custom-error"
+	appRequest "srwilliamg/app/v1/internal/request"
 
 	"go.uber.org/zap"
 )

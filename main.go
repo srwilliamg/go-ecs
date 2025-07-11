@@ -5,7 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	appMiddleware "srwilliamg/app/v1/middleware"
+	appMiddleware "srwilliamg/app/v1/internal/middleware"
+	"srwilliamg/app/v1/routes"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -21,9 +22,7 @@ func createApp() *chi.Mux {
 func run() {
 	app := createApp()
 
-	app.Get("/", func(w http.ResponseWriter, app *http.Request) {
-		w.Write([]byte("welcome"))
-	})
+	routes.Routes(app)
 
 	fmt.Println("Starting server on port 3000")
 	http.ListenAndServe(":3000", app)
