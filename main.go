@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"srwilliamg/app/v1/internal/config"
+	"srwilliamg/app/v1/routes"
 	"time"
 
-	"srwilliamg/app/v1/internal/config"
 	appMiddleware "srwilliamg/app/v1/internal/middleware"
-	"srwilliamg/app/v1/routes"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -24,10 +24,8 @@ func run() {
 	app := createApp()
 	config.Load()
 	app.Mount("/", routes.Routes(app))
-
 	fmt.Printf("Starting server on %s\n", config.Envs.Port)
 	err := http.ListenAndServe(":"+config.Envs.Port, app)
-
 	if err != nil {
 		fmt.Printf("Error starting server: %v\n", err)
 		return

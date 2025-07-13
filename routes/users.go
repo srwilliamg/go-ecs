@@ -11,7 +11,6 @@ func UserRouter() *chi.Mux {
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte("List of users"))
-
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
@@ -20,7 +19,6 @@ func UserRouter() *chi.Mux {
 
 	router.Post("/", func(w http.ResponseWriter, r *http.Request) {
 		_, err := w.Write([]byte("Create a user"))
-
 		if err != nil {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
