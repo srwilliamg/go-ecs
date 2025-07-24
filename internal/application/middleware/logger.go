@@ -3,8 +3,8 @@ package appMiddleware
 import (
 	"context"
 	"net/http"
-	contextKey "srwilliamg/app/v1/internal/context-key"
-	"srwilliamg/app/v1/internal/logger"
+	contextKey "srwilliamg/app/v1/internal/application/context-key"
+	"srwilliamg/app/v1/internal/infrastructure/logger"
 )
 
 func InitLogger(next http.Handler) http.Handler {

@@ -2,16 +2,17 @@ package logger
 
 import (
 	"os"
+	"srwilliamg/app/v1/internal/interfaces/logger"
 
 	"go.uber.org/zap"
 )
 
-func GetLogger() *Logger {
+func GetLogger() *logger.Logger {
 	zapLog := zap.Must(zap.NewProduction())
 	if os.Getenv("APP_ENV") != "production" {
 		zapLog = zap.Must(zap.NewDevelopment())
 	}
-	zapLogger := NewZapAdapter(zapLog)
+	zapLogger := logger.NewZapAdapter(zapLog)
 	defer (func() {
 		err := zapLogger.Sync()
 		if err != nil {

@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"net/http"
-	database "srwilliamg/app/v1/db"
-	"srwilliamg/app/v1/internal/config"
-	"srwilliamg/app/v1/internal/logger"
-	"srwilliamg/app/v1/routes"
+	"srwilliamg/app/v1/internal/application/routes"
+	"srwilliamg/app/v1/internal/infrastructure/config"
+	database "srwilliamg/app/v1/internal/infrastructure/db"
+	"srwilliamg/app/v1/internal/infrastructure/logger"
+	repository "srwilliamg/app/v1/internal/repositories/users"
 	"time"
 
-	appMiddleware "srwilliamg/app/v1/internal/middleware"
+	appMiddleware "srwilliamg/app/v1/internal/application/middleware"
 
 	"os"
 
@@ -35,6 +36,9 @@ func run() {
 		os.Exit(1)
 	}
 	defer closer()
+
+	repoUsers := &repository.UserRepository{}
+	repoUsers.SetDB(db)
 
 	app.Mount("/", routes.Routes(app))
 

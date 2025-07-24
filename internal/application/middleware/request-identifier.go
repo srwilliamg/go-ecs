@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	contextKey "srwilliamg/app/v1/internal/context-key"
+	contextKey "srwilliamg/app/v1/internal/application/context-key"
 	"strings"
 
 	"go.uber.org/zap"
@@ -17,7 +17,7 @@ func RequestIdentifier(next http.Handler) http.Handler {
 		logger.Info("Request Identifier middleware invoked", zap.String("method", r.Method))
 		if r.Body != nil && strings.Compare(r.Method, "GET") != 0 {
 			var buf bytes.Buffer
-			var mapData map[string]interface{}
+			var mapData map[string]any
 
 			tee := io.TeeReader(r.Body, &buf)
 			err := json.NewDecoder(tee).Decode(&mapData)

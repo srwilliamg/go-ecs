@@ -2,7 +2,7 @@ package request
 
 import (
 	"reflect"
-	customError "srwilliamg/app/v1/internal/custom-error"
+	customError "srwilliamg/app/v1/internal/application/custom-error"
 
 	zap "go.uber.org/zap"
 )
