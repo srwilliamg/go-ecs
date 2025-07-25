@@ -1,16 +1,18 @@
 package repository
 
-import dbInterface "srwilliamg/app/v1/internal/interfaces/db"
+import (
+	"srwilliamg/app/v1/internal/domain/entities"
+	dbInterface "srwilliamg/app/v1/internal/interfaces/db"
+)
 
 type Base struct {
-	db dbInterface.DatabaseInterface
+	querier dbInterface.QuerierInterface[entities.User]
 }
 
-func (repo *Base) SetDB(db dbInterface.DatabaseInterface) { repo.db = db }
+func (repo *Base) SetQuerier(db dbInterface.DatabaseInterface) {
+	repo.querier = dbInterface.NewQuerier[entities.User](db)
+}
 
-func (repo *Base) GetDB() dbInterface.DatabaseInterface {
-	if repo.db == nil {
-		return nil
-	}
-	return repo.db
+func (repo *Base) GetQuerier() dbInterface.QuerierInterface[entities.User] {
+	return repo.querier
 }

@@ -1,27 +1,18 @@
 package repositoryUsers
 
 import (
+	"srwilliamg/app/v1/internal/domain/entities"
 	database "srwilliamg/app/v1/internal/interfaces/db"
 	repository "srwilliamg/app/v1/internal/interfaces/repository"
 
 	sq "github.com/Masterminds/squirrel"
 )
 
-type User struct {
-	ID        int64   `json:"id"`
-	Username  string  `json:"username"`
-	Email     string  `json:"email"`
-	Password  string  `json:"password"`
-	CreatedAt string  `json:"created_at"`
-	UpdatedAt string  `json:"updated_at"`
-	DeletedAt *string `json:"deleted_at,omitempty"`
-}
-
 type UserRepository struct {
 	repository.Base
 }
 
-func (repo UserRepository) GetUsers() (*database.Result, error) {
+func (repo UserRepository) GetUsers() (*database.Result[entities.User], error) {
 	getUsersQuery := func() (string, error) {
 
 		users := sq.Select("*").From("users")
@@ -40,7 +31,21 @@ func (repo UserRepository) GetUsers() (*database.Result, error) {
 	if err == nil {
 		return nil, err
 	}
-	results, err := repo.GetDB().Query(sql)
+
+	scanUser := func(values []any) entities.User {
+		return entities.User{
+			ID:        values[0].(int64),   // ID
+			Username:  values[1].(string),  // Username
+			Email:     values[2].(string),  // Email
+			Password:  values[3].(string),  // Password
+			CreatedAt: values[4].(string),  // CreatedAt
+			UpdatedAt: values[5].(string),  // UpdatedAt
+			DeletedAt: values[6].(*string), // DeletedAt (can be nil)
+
+		}
+	}
+
+	results, err := repo.GetQuerier().Query(sql, scanUser)
 
 	return results, nil
 }
