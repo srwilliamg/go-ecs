@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"srwilliamg/app/v1/internal/application/routes"
+	"srwilliamg/app/v1/internal/application/controller"
+	routerRoot "srwilliamg/app/v1/internal/application/routes/root"
+	routerUsers "srwilliamg/app/v1/internal/application/routes/users"
+	usecase "srwilliamg/app/v1/internal/domain/use-case"
 	"srwilliamg/app/v1/internal/infrastructure/config"
 	database "srwilliamg/app/v1/internal/infrastructure/db"
 	"srwilliamg/app/v1/internal/infrastructure/logger"
@@ -38,9 +41,13 @@ func run() {
 	defer closer()
 
 	repoUsers := &repository.UserRepository{}
-	repoUsers.SetDB(db)
+	repoUsers.SetQuerier(db)
 
-	app.Mount("/", routes.Routes(app))
+	useCaseUser := usecase.NewUser(repoUsers)
+	controllerUser := controller.NewUserController(useCaseUser)
+
+	routerRoot.NewRootRouter(app)
+	routerUsers.NewUserRouter(app, *controllerUser)
 
 	fmt.Fprintf(os.Stdout, "Starting server on %s\n", config.Envs.Port)
 

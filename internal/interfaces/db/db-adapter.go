@@ -6,7 +6,6 @@ import (
 
 type DatabaseInterface interface {
 	SetDB(db *sql.DB)
-	Query(rawSql string) (*Result[any], error)
 	GetDB() *sql.DB
 }
 

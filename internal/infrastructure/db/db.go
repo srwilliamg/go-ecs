@@ -6,6 +6,8 @@ import (
 	"srwilliamg/app/v1/internal/infrastructure/config"
 	database "srwilliamg/app/v1/internal/interfaces/db"
 	l "srwilliamg/app/v1/internal/interfaces/logger"
+
+	_ "github.com/lib/pq"
 )
 
 func Connect(logger *l.Logger) (database.DatabaseInterface, func(), error) {

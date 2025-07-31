@@ -41,6 +41,10 @@ func String(key, val string) Field {
 	return Field{Key: key, Value: val}
 }
 
+func Any(field string, val interface{}) Field {
+	return Field{Key: field, Value: val}
+}
+
 func Int(key string, val int) Field {
 	return Field{Key: key, Value: val}
 }

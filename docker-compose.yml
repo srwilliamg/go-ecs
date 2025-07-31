@@ -21,14 +21,16 @@ services:
     environment:
       - DB_HOST=postgres_db
       - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASS=postgres123
+      - DB_USER=user
+      - DB_PASS=pass
       - DB_NAME=gopi-db
       - APP_ENV=development
       - LOG_LEVEL=info
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d
     depends_on:
       - postgres_db
 volumes:
   postgres_db:
     driver: local
- 

@@ -1,28 +1,30 @@
 package appMiddleware
 
 import (
+	"fmt"
 	"net/http"
 	contextKey "srwilliamg/app/v1/internal/application/context-key"
 	customError "srwilliamg/app/v1/internal/application/custom-error"
 	"srwilliamg/app/v1/internal/application/request"
-
-	"go.uber.org/zap"
+	"srwilliamg/app/v1/internal/interfaces/logger"
 )
 
 func ErrorHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger := r.Context().Value(contextKey.LoggerKey).(*zap.SugaredLogger)
+		log := r.Context().Value(contextKey.LoggerKey).(*logger.Logger)
 		defer func() {
 			if err := recover(); err != nil {
+
+				fmt.Println(fmt.Errorf("errr", err))
 
 				res, err := request.MarshalResponse[any](nil, customError.NewCustomError("Unexpected error", nil))
 
 				if err != nil {
-					logger.Error("Error marshalling response:", zap.Error(err))
+					(*log).Error("Error marshalling response:", logger.Err(err))
 					res = []byte(`{"error": "Internal Server Error"}`)
 				}
 
-				logger.Error("Unexpected error", zap.Any("error", err))
+				(*log).Error("Unexpected error", logger.Err(err))
 				request.PrepareResponse(&w, res, http.StatusInternalServerError)
 				return
 			}
