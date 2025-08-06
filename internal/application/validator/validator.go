@@ -12,14 +12,14 @@ import (
 func DecodeAndValidateBody[T any](logger *log.Logger, validate *validator.Validate, body io.ReadCloser, dto *T) []string {
 	if err := request.DecodeBody(body, dto); err != nil {
 		errorMessage := err.Error()
-		logger.Error(errorMessage)
+		(*logger).Error(errorMessage)
 		return []string{errorMessage}
 	}
 
 	validationErrorsSlice := ValidateStruct(validate, *dto)
 
 	if validationErrorsSlice != nil {
-		logger.Error("Invalid body")
+		(*logger).Error("Invalid body")
 		return validationErrorsSlice
 	}
 

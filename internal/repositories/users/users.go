@@ -14,9 +14,8 @@ type UserRepository struct {
 
 func (repo UserRepository) GetUsers() (*database.Result[entities.User], error) {
 	getUsersQuery := func() (string, error) {
-
-		users := sq.Select("*").From("users")
-		activeUsers := users.Where(sq.Eq{"deleted_at": nil})
+		users := sq.Select("*").From("\"user\" u")
+		activeUsers := users //.Where(sq.Eq{"deleted_at": nil})
 
 		sql, _, err := activeUsers.ToSql()
 		if err != nil {
@@ -28,24 +27,19 @@ func (repo UserRepository) GetUsers() (*database.Result[entities.User], error) {
 
 	sql, err := getUsersQuery()
 
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 
-	scanUser := func(values []any) entities.User {
-		return entities.User{
-			ID:        values[0].(int64),   // ID
-			Username:  values[1].(string),  // Username
-			Email:     values[2].(string),  // Email
-			Password:  values[3].(string),  // Password
-			CreatedAt: values[4].(string),  // CreatedAt
-			UpdatedAt: values[5].(string),  // UpdatedAt
-			DeletedAt: values[6].(*string), // DeletedAt (can be nil)
-
-		}
+	scanUser := func() entities.User {
+		return entities.User{}
 	}
 
 	results, err := repo.GetQuerier().Query(sql, scanUser)
+
+	if err != nil {
+		return nil, err
+	}
 
 	return results, nil
 }

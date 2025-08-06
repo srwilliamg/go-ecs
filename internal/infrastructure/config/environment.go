@@ -2,13 +2,12 @@ package config
 
 import (
 	"os"
-	"strconv"
 )
 
 type EnviromentConfig struct {
 	Port     string
 	DBHost   string
-	DBPort   int
+	DBPort   string
 	DBUser   string
 	DBPass   string
 	DBName   string
@@ -18,12 +17,11 @@ type EnviromentConfig struct {
 var Envs *EnviromentConfig
 
 func Load() *EnviromentConfig {
-	dbPort, _ := strconv.Atoi(getEnv("DB_PORT", "5432"))
 
 	Envs = &EnviromentConfig{
 		Port:     getEnv("PORT", "8080"),
 		DBHost:   getEnv("DB_HOST", "localhost"),
-		DBPort:   dbPort,
+		DBPort:   getEnv("DB_PORT", "5432"),
 		DBUser:   getEnv("DB_USER", "user"),
 		DBPass:   getEnv("DB_PASS", "pass"),
 		DBName:   getEnv("DB_NAME", "gopi-db"),

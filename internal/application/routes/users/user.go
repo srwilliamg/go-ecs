@@ -2,19 +2,20 @@ package routerUsers
 
 import (
 	controller "srwilliamg/app/v1/internal/application/controller"
+	"srwilliamg/app/v1/internal/application/request"
 
 	"github.com/go-chi/chi"
 )
 
 type User struct {
 	router         *chi.Mux
-	userController *controller.UserController
+	userController controller.UserController
 }
 
 func NewUserRouter(router *chi.Mux, controller controller.UserController) *User {
 	userRouter := &User{
 		router:         router,
-		userController: &controller,
+		userController: controller,
 	}
 
 	userRouter.initRoutes()
@@ -29,7 +30,7 @@ func (u *User) initRoutes() {
 func (u *User) UsersRoute() *chi.Mux {
 	router := chi.NewRouter()
 
-	router.Get("/", u.userController.GetUsers)
+	router.Get("/", request.WithReqHandlerWrapper((u.userController).GetUsers))
 
 	return router
 }

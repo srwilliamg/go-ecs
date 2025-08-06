@@ -32,11 +32,16 @@ func (u *User) ToEntity() *entities.User {
 		Password:  u.Password,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
-		DeletedAt: u.DeletedAt,
 	}
 }
 
 func FromEntity(user *entities.User) *User {
+	var deletion *string
+	if user.DeletedAt.Valid {
+		deletion = nil
+	} else {
+		deletion = &user.DeletedAt.String
+	}
 	return &User{
 		ID:        user.ID,
 		Username:  user.Username,
@@ -44,7 +49,7 @@ func FromEntity(user *entities.User) *User {
 		Password:  user.Password,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
-		DeletedAt: user.DeletedAt,
+		DeletedAt: deletion,
 	}
 }
 

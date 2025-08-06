@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"srwilliamg/app/v1/internal/application/dto"
 	"srwilliamg/app/v1/internal/application/request"
+	"srwilliamg/app/v1/internal/interfaces/logger"
 )
 
 type UserUseCase interface {
@@ -20,15 +21,18 @@ func NewUserController(userUseCase UserUseCase) *UserController {
 	}
 }
 
-func (u *UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (u *UserController) GetUsers(w http.ResponseWriter, r *http.Request, log logger.Logger) {
+	log.Info("In GET Users Controller")
 	users, err := u.userUseCase.GetUser()
 	if err != nil {
+		log.Error("Error getting the user in use case", logger.Err(err))
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
 	res, err := request.MarshalResponse(users, nil)
 	if err != nil {
+		log.Error("Error Marshalling", logger.Err(err))
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}

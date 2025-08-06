@@ -22,17 +22,12 @@ func (u *User) GetUser() ([]dto.User, error) {
 	}
 	var userDTOs []dto.User
 
-	for _, user := range users.Rows {
-		userDTO := dto.User{
-			ID:        user.ID,
-			Username:  user.Username,
-			Email:     user.Email,
-			CreatedAt: user.CreatedAt,
-			UpdatedAt: user.UpdatedAt,
-			DeletedAt: user.DeletedAt,
+	if users != nil {
+		for _, user := range users.Rows {
+			nu := dto.FromEntity(&user)
+			userDTOs = append(userDTOs, *nu)
 		}
-		userDTOs = append(userDTOs, userDTO)
-	}
 
+	}
 	return userDTOs, nil
 }

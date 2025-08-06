@@ -7,7 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func GetLogger() *logger.Logger {
+func GetLogger() logger.Logger {
 	zapLog := zap.Must(zap.NewProduction())
 	if os.Getenv("APP_ENV") != "production" {
 		zapLog = zap.Must(zap.NewDevelopment())
@@ -27,5 +27,5 @@ func GetLogger() *logger.Logger {
 	})()
 
 	zapLogger.Info("Logger initialized")
-	return &zapLogger
+	return zapLogger
 }

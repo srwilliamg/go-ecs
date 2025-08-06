@@ -1,7 +1,7 @@
 
 PROJECT_NAME := "gopi"
 
-.PHONY: all fmt tidy help lint test run build clean help build-docker-local docker-run-local
+.PHONY: all fmt tidy help lint test run build clean help build-docker-local docker-run-local start-db
 
 all: fmt tidy lint build test
 
@@ -43,6 +43,9 @@ stop-compose:
 
 clean-compose: 
 	@docker rm go-db
+
+start-db:
+	@docker compose up postgres_db -d
 
 help: ## Displays this help screen
 	@grep -h -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'

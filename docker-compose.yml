@@ -4,12 +4,13 @@ services:
     container_name: go-db
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres123
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: gopi-db
     ports:
       - "5432:5432"
     volumes:
-      - postgres_db:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
   gopi:
     build:
       context: .
@@ -19,16 +20,13 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - DB_HOST=postgres_db
-      - DB_PORT=5432
-      - DB_USER=user
-      - DB_PASS=pass
-      - DB_NAME=gopi-db
-      - APP_ENV=development
-      - LOG_LEVEL=info
-    volumes:
-      - ./db-data:/var/lib/postgresql/data
-      - ./config/init.sql:/docker-entrypoint-initdb.d
+      DB_HOST: postgres_db
+      DB_PORT: 5432
+      DB_USER: user
+      DB_PASS: pass
+      DB_NAME: gopidb
+      APP_ENV: development
+      LOG_LEVEL: info
     depends_on:
       - postgres_db
 volumes:

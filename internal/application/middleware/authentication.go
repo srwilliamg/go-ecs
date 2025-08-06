@@ -11,8 +11,8 @@ import (
 
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger := r.Context().Value(contextKey.LoggerKey).(*logger.Logger)
-		(*logger).Info("Request Auth:", log.Any("request", r))
+		logger := r.Context().Value(contextKey.LoggerKey).(logger.Logger)
+		(logger).Info("Request Auth:", log.Any("request", *r))
 
 		var token string
 
@@ -31,10 +31,10 @@ func Auth(next http.Handler) http.Handler {
 
 		res, err := request.MarshalResponse[any](nil, customError.NewCustomError("You are not Authorized", nil))
 		if err != nil {
-			(*logger).Error("Error marshalling response:", log.Err(err))
+			(logger).Error("Error marshalling response:", log.Err(err))
 		}
 
-		(*logger).Info("Response Auth:", log.Any("response", res))
+		(logger).Info("Response Auth:", log.Any("response", res))
 		request.PrepareResponse(&w, res, http.StatusUnauthorized)
 	})
 
