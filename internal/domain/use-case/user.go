@@ -31,3 +31,12 @@ func (u *User) GetUser() ([]dto.User, error) {
 	}
 	return userDTOs, nil
 }
+
+func (u *User) CreateUser(user dto.User) error {
+	_, err := u.userRepository.CreateUsers([]dto.User{user})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -25,12 +25,15 @@ func NewDatabase(db *sqlx.DB) *Database {
 }
 
 type Result[T any] struct {
-	Rows []T
+	Rows         []T
+	LastInsertId int64
+	RowsAffected int64
 }
 
 type QuerierInterface[T any] interface {
 	GetDB() *sqlx.DB
 	Query(rawSql string, scanFunc func() T) (*Result[T], error)
+	Mutate(rawSql string, insertStructs []*T) (*Result[T], error)
 }
 
 type Querier[T any] struct {
@@ -45,6 +48,24 @@ func NewQuerier[T any](db DatabaseInterface) *Querier[T] {
 
 func (q *Querier[T]) GetDB() *sqlx.DB {
 	return q.DatabaseInterface.GetDB()
+}
+
+func (querier *Querier[T]) Mutate(rawSql string, insertStructs []*T) (*Result[T], error) {
+	db := querier.GetDB()
+	result, err := db.NamedExec(rawSql, insertStructs)
+	if err != nil {
+		return nil, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+	res := &Result[T]{
+		RowsAffected: rowsAffected,
+		Rows:         []T{},
+	}
+
+	return res, nil
 }
 
 func (querier *Querier[T]) Query(rawSql string, scanFunc func() T) (*Result[T], error) {

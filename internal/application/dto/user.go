@@ -3,7 +3,7 @@ package dto
 import "srwilliamg/app/v1/internal/domain/entities"
 
 type User struct {
-	ID        int64   `json:"id"`
+	ID        int64   `json:"id", omitempty`
 	Username  string  `json:"username"`
 	Email     string  `json:"email"`
 	Password  string  `json:"password"`

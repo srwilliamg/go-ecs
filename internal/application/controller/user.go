@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	customError "srwilliamg/app/v1/internal/application/custom-error"
 	"srwilliamg/app/v1/internal/application/dto"
 	"srwilliamg/app/v1/internal/application/request"
 	"srwilliamg/app/v1/internal/interfaces/logger"
@@ -9,6 +10,7 @@ import (
 
 type UserUseCase interface {
 	GetUser() ([]dto.User, error)
+	CreateUser(dto.User) error
 }
 
 type UserController struct {
@@ -22,22 +24,30 @@ func NewUserController(userUseCase UserUseCase) *UserController {
 }
 
 func (u *UserController) GetUsers(w http.ResponseWriter, r *http.Request, log logger.Logger) {
-	log.Info("In GET Users Controller")
-	users, err := u.userUseCase.GetUser()
+	response, err := u.userUseCase.GetUser()
 	if err != nil {
-		log.Error("Error getting the user in use case", logger.Err(err))
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		cerr := customError.NewCustomError("Error fetching users", nil)
+		request.PrepareResponse(&w, cerr, http.StatusInternalServerError, log)
+	}
+
+	request.PrepareResponse(&w, response, http.StatusOK, log)
+}
+
+func (u *UserController) CreateUser(w http.ResponseWriter, r *http.Request, log logger.Logger) {
+	log.Info("In POST User Controller")
+	var user dto.User
+	if err := request.DecodeBody(r.Body, &user); err != nil {
+		cerr := customError.NewCustomError("Error decoding JSON body", nil)
+		request.PrepareResponse(&w, cerr, http.StatusBadRequest, log)
 		return
 	}
 
-	res, err := request.MarshalResponse(users, nil)
+	err := u.userUseCase.CreateUser(user)
 	if err != nil {
-		log.Error("Error Marshalling", logger.Err(err))
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		cerr := customError.NewCustomError("Error creating user", []string{err.Error()})
+		request.PrepareResponse(&w, cerr, http.StatusInternalServerError, log)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
+	request.PrepareResponse(&w, user, http.StatusCreated, log)
 }

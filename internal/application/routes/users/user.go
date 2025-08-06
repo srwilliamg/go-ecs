@@ -31,6 +31,7 @@ func (u *User) UsersRoute() *chi.Mux {
 	router := chi.NewRouter()
 
 	router.Get("/", request.WithReqHandlerWrapper((u.userController).GetUsers))
+	router.Post("/", request.WithReqHandlerWrapper((u.userController).CreateUser))
 
 	return router
 }

@@ -1,8 +1,6 @@
 package request
 
 import (
-	"reflect"
-	customError "srwilliamg/app/v1/internal/application/custom-error"
 	log "srwilliamg/app/v1/internal/interfaces/logger"
 )
 
@@ -11,14 +9,10 @@ type controllerResponse[T any] struct {
 	Error error `json:"error"`
 }
 
-func BaseResponse[T any](Data T, err error, logger *log.Logger) *controllerResponse[T] {
-	if err != nil && logger != nil {
-		(*logger).Error("error", log.Err(err))
+func BaseResponse[T any](Data T, logger *log.Logger) *controllerResponse[T] {
+	if v, ok := any(Data).(error); ok && v != nil {
+		return &controllerResponse[T]{Error: v}
 	}
 
-	if err != nil && reflect.TypeOf(err).String() == "*errors.errorString" {
-		return &controllerResponse[T]{Error: &customError.CustomError{Message: err.Error()}}
-	}
-
-	return &controllerResponse[T]{Data, err}
+	return &controllerResponse[T]{Data, nil}
 }

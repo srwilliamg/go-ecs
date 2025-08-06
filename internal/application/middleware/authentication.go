@@ -29,13 +29,13 @@ func Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		res, err := request.MarshalResponse[any](nil, customError.NewCustomError("You are not Authorized", nil))
+		res, err := request.MarshalResponse[any](customError.NewCustomError("You are not Authorized", nil))
 		if err != nil {
 			(logger).Error("Error marshalling response:", log.Err(err))
 		}
 
 		(logger).Info("Response Auth:", log.Any("response", res))
-		request.PrepareResponse(&w, res, http.StatusUnauthorized)
+		request.PrepareResponse(&w, res, http.StatusUnauthorized, logger)
 	})
 
 }

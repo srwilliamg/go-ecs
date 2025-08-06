@@ -1,6 +1,7 @@
 package repositoryUsers
 
 import (
+	"srwilliamg/app/v1/internal/application/dto"
 	"srwilliamg/app/v1/internal/domain/entities"
 	database "srwilliamg/app/v1/internal/interfaces/db"
 	repository "srwilliamg/app/v1/internal/interfaces/repository"
@@ -36,6 +37,28 @@ func (repo UserRepository) GetUsers() (*database.Result[entities.User], error) {
 	}
 
 	results, err := repo.GetQuerier().Query(sql, scanUser)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (repo UserRepository) CreateUsers(insUsers []dto.User) (*database.Result[entities.User], error) {
+	var err error
+	sql := "insert into \"user\" (username, email, password, created_at, updated_at) values (:username, :email, :password, now(), now())"
+	entitiesUsers := make([]*entities.User, len(insUsers))
+
+	for i, v := range insUsers {
+		v.Password, err = entities.HashPassword(v.Password)
+		if err != nil {
+			return nil, err
+		}
+		entitiesUsers[i] = v.ToEntity()
+	}
+
+	results, err := repo.GetQuerier().Mutate(sql, entitiesUsers)
 
 	if err != nil {
 		return nil, err
