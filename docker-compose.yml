@@ -2,7 +2,7 @@ services:
   postgres_db:
     image: postgres:latest
     container_name: go-db
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
@@ -24,7 +24,7 @@ services:
       DB_PORT: 5432
       DB_USER: user
       DB_PASS: pass
-      DB_NAME: gopidb
+      DB_NAME: gopi-db
       APP_ENV: development
       LOG_LEVEL: info
     depends_on:
